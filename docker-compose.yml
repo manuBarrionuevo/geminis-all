@@ -1,0 +1,73 @@
+#Docker Networks
+networks:
+  geminis-ntw:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
+
+# Workflow
+services:
+  mariadb:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "9306:3306"
+    volumes:
+      - ./deployment/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+    networks:
+      geminis-ntw:
+        ipv4_address: 172.20.0.7
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    restart: unless-stopped
+    ports:
+        - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    networks:
+      geminis-ntw:
+        ipv4_address: 172.20.0.9
+
+  geminis-backend:
+    build:
+      context: .
+      dockerfile: RoadRunner.Dockerfile
+    container_name: geminis-backend
+    ports:
+      - "1215:1215"
+    volumes:
+      - ./backend:/var/www/html:delegated
+    networks:
+      geminis-ntw:
+        ipv4_address: 172.20.0.8
+    depends_on:
+       mariadb : {condition: service_healthy}
+       redis: {condition: service_healthy}
+
+  geminis-front-v3:
+    build:
+      context: .
+      dockerfile: FrontEnd.Dockerfile
+    volumes:
+        - ./frontend:/app
+    tty: true
+    networks:
+      geminis-ntw:
+        ipv4_address: 172.20.0.5
+  depends_on:
+    geminis-backend: {condition: service_healthy}

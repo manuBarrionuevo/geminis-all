@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2676866f-93ab-4f96-a21f-843f95e1af5a" name="Changes" comment="Prueba repo back-front">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/octane/FrankenPHP/supervisord.frankenphp.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/octane/RoadRunner/.rr.prod.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/octane/RoadRunner/supervisord.roadrunner.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/octane/Swoole/supervisord.swoole.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/php.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/start-container" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.horizon.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.scheduler.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.worker.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/deployment/utilities.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/crontab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/nginx.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/opcache.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/php.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/queue-worker.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/redis.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/run.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/start.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/docker/supervisor.conf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/services/organizations/organization.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/services/organizations/organization.service.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/store/organizations/organization.module.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/store/organizations/organization.module.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationDetail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/mysql.deploy.dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/mysql/user.cnf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/php.deploy.dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/php.worker.deploy.dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev-env/php.dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dev-env/php.dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose-ci.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/db/my.cnf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/db/sql/000-create-databases.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/db/sql/001-create-tables.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/db/sql/002-grant_privileges.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/db/sql/init-database.sh" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/api/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php">
+    <include_path>
+      <path value="$PROJECT_DIR$/api/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/api/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/api/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/api/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/api/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/api/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/api/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/api/vendor/league/flysystem-local" />
+      <path value="$PROJECT_DIR$/api/vendor/league/config" />
+      <path value="$PROJECT_DIR$/api/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/api/vendor/nette/utils" />
+      <path value="$PROJECT_DIR$/api/vendor/nette/schema" />
+      <path value="$PROJECT_DIR$/api/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/api/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/api/vendor/spatie/flare-client-php" />
+      <path value="$PROJECT_DIR$/api/vendor/spatie/ignition" />
+      <path value="$PROJECT_DIR$/api/vendor/spatie/laravel-ignition" />
+      <path value="$PROJECT_DIR$/api/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/api/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/api/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/api/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/api/vendor/spatie/backtrace" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/prompts" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/sail" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/api/vendor/dflydev/dot-access-data" />
+      <path value="$PROJECT_DIR$/api/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/pint" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/serializable-closure" />
+      <path value="$PROJECT_DIR$/api/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/api/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/api/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/api/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/api/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/api/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/api/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/api/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/api/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/api/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/api/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/polyfill-uuid" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/uid" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/clock" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/mailer" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/api/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/api/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/api/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/api/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/api/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/api/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/api/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/api/vendor/carbonphp/carbon-doctrine-types" />
+      <path value="$PROJECT_DIR$/api/vendor/fruitcake/php-cors" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/api/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/api/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/api/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/api/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/api/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/api/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/api/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/api/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/api/vendor/guzzlehttp/uri-template" />
+      <path value="$PROJECT_DIR$/api/vendor/nunomaduro/termwind" />
+      <path value="$PROJECT_DIR$/api/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/api/vendor/composer" />
+      <path value="$PROJECT_DIR$/api/vendor/laminas/laminas-diactoros" />
+      <path value="$PROJECT_DIR$/api/vendor/symfony/psr-http-message-bridge" />
+      <path value="$PROJECT_DIR$/api/vendor/laravel/octane" />
+      <path value="$PROJECT_DIR$/api/vendor/fly-apps/dockerfile-laravel" />
+    </include_path>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2hNC9JJSU3Zs2xak4O2ReyJy7U5" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/mnt/Datos/SouthHive/Proyectos/geminis&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/home/vtonello/.local/share/JetBrains/Toolbox/apps/phpstorm/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Makefile Target.api-debug">
+    <configuration name="Main" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner configuration_file="$PROJECT_DIR$/api/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PS-241.17011.119" />
+        <option value="bundled-php-predefined-ba97393d7c68-48a1a656d44e-com.jetbrains.php.sharedIndexes-PS-241.17011.119" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2676866f-93ab-4f96-a21f-843f95e1af5a" name="Changes" comment="" />
+      <created>1717424995155</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1717424995155</updated>
+      <workItem from="1717424996300" duration="49079000" />
+    </task>
+    <task id="LOCAL-00001" summary="Prueba repo back-front">
+      <option name="closed" value="true" />
+      <created>1717510277747</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1717510277747</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Prueba repo back-front" />
+    <option name="LAST_COMMIT_MESSAGE" value="Prueba repo back-front" />
+  </component>
+</project>

@@ -5,44 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2676866f-93ab-4f96-a21f-843f95e1af5a" name="Changes" comment="Prueba repo back-front">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/octane/FrankenPHP/supervisord.frankenphp.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/octane/RoadRunner/.rr.prod.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/octane/RoadRunner/supervisord.roadrunner.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/octane/Swoole/supervisord.swoole.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/php.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/start-container" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.horizon.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.scheduler.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/supervisord.worker.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/deployment/utilities.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/crontab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/nginx.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/opcache.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/php.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/queue-worker.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/redis.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/run.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/start.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/docker/supervisor.conf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/router/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/services/organizations/organization.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/services/organizations/organization.service.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/store/organizations/organization.module.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/store/organizations/organization.module.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationDetail.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/views/dashboards/organization/OrganizationList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/mysql.deploy.dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/mysql/user.cnf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/php.deploy.dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/php.worker.deploy.dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev-env/php.dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dev-env/php.dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose-ci.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/db/my.cnf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/db/sql/000-create-databases.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/db/sql/001-create-tables.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/db/sql/002-grant_privileges.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/db/sql/init-database.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +14,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
-    <pharConfigPath>$PROJECT_DIR$/api/composer.json</pharConfigPath>
+    <pharConfigPath>$PROJECT_DIR$/backend/composer.json</pharConfigPath>
     <execution />
   </component>
   <component name="Git.Settings">
@@ -188,26 +152,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/mnt/Datos/SouthHive/Proyectos/geminis&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/home/vtonello/.local/share/JetBrains/Toolbox/apps/phpstorm/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/mnt/Datos/SouthHive/Proyectos/geminis-temp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "ts.external.directory.path": "/home/vtonello/.local/share/JetBrains/Toolbox/apps/phpstorm/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Makefile Target.api-debug">
+  <component name="RunManager">
     <configuration name="Main" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner configuration_file="$PROJECT_DIR$/api/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
       <method v="2" />
@@ -230,6 +194,7 @@
       <option name="presentableId" value="Default" />
       <updated>1717424995155</updated>
       <workItem from="1717424996300" duration="49079000" />
+      <workItem from="1717585010832" duration="801000" />
     </task>
     <task id="LOCAL-00001" summary="Prueba repo back-front">
       <option name="closed" value="true" />

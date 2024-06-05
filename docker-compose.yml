@@ -69,5 +69,3 @@ services:
     networks:
       geminis-ntw:
         ipv4_address: 172.20.0.5
-  depends_on:
-    geminis-backend: {condition: service_healthy}

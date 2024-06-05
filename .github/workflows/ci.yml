@@ -46,7 +46,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image for Backend
-        run: docker build -f ${{ env.BACKEND_DIR }}/Dockerfile -t backend .
+        run: docker build -f ${{ env.BACKEND_DIR }}/RoadRunner.Dockerfile -t backend .
+        working-directory: ${{ env.BACKEND_DIR }}
 
   sonarcloud:
     name: SonarCloud Scan

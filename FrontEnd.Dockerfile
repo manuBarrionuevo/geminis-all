@@ -11,7 +11,7 @@ RUN npm install
 COPY frontend/ .
 
 # me aseguro de que vue-cli-service esté en el PATH
-ENV PATH /app/node_modules/.bin:$PATH
+#ENV PATH /app/node_modules/.bin:$PATH
 
 EXPOSE 8080
 

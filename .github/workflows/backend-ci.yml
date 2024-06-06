@@ -1,4 +1,4 @@
-name: "Backend Continuous Integration"
+name: CI for Backend
 
 on:
   push:
@@ -9,56 +9,67 @@ on:
       - 'develop'
 
 jobs:
-  build:
-    name: Build and Test Backend
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
-
-      - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader --working-dir=backend
-
-      - name: Copy environment file
-        run: cp $GITHUB_WORKSPACE/backend/.env.example $GITHUB_WORKSPACE/backend/.env
-
-      - name: Generate application key
-        run: php $GITHUB_WORKSPACE/backend/artisan key:generate
-
-      - name: Run unit tests
-        run: php $GITHUB_WORKSPACE/backend/vendor/bin/phpunit --configuration $GITHUB_WORKSPACE/backend/phpunit.xml --coverage-text --coverage-clover=$GITHUB_WORKSPACE/backend/coverage.xml
-
-      - name: Copy Dockerfile and deployment files to backend
-        run: |
-          cp $GITHUB_WORKSPACE/RoadRunner.Dockerfile $GITHUB_WORKSPACE/backend/RoadRunner.Dockerfile
-          mkdir -p $GITHUB_WORKSPACE/backend/deployment
-          cp -r $GITHUB_WORKSPACE/deployment/* $GITHUB_WORKSPACE/backend/deployment/
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: docker build -t geminis-backend -f $GITHUB_WORKSPACE/backend/RoadRunner.Dockerfile $GITHUB_WORKSPACE/backend
+        run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
+
+      - name: Wait for MySQL
+        run: |
+          until docker run --network="host" --rm mysql:5.7 mysqladmin ping -h127.0.0.1 --silent; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 3
+          done
+
+      - name: Run unit tests
+        run: |
+          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ./tests/_output
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: $GITHUB_WORKSPACE/backend/coverage.xml
+          path: ./coverage.xml
 
       - name: Create a comment with the test results
         uses: actions/github-script@v3
         with:
           script: |
             const fs = require('fs');
-            const report = fs.readFileSync(process.env.GITHUB_WORKSPACE + '/backend/coverage.xml', 'utf8');
+            const coverage = fs.readFileSync('coverage.xml', 'utf8');
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
-              body: `### Test Coverage Report\n\`\`\`\n${report}\n\`\`\``
+              body: `### Test Coverage Report\n\`\`\`\n${coverage}\n\`\`\``
             });

@@ -42,14 +42,14 @@ jobs:
 
       - name: Esperar a que MySQL esté listo
         run: |
-          until docker run --network github_network mysql:8 mysqladmin ping -h mysql --silent; do
+          until docker run --network ${{ job.services.mysql.networks.github_network }} mysql:8 mysqladmin ping -h mysql --silent; do
             echo "Esperando a que MySQL esté listo..."
             sleep 5
           done
           echo "¡MySQL está listo!"
 
       - name: Iniciar contenedor backend
-        run: docker run -d --name geminis-backend --network github_network --env-file .env geminis-backend:latest
+        run: docker run -d --name geminis-backend --network ${{ job.services.mysql.networks.github_network }} --env-file .env geminis-backend:latest
 
       - name: Copiar .env.example y renombrarlo a .env
         run: docker cp backend/.env.example geminis-backend:/var/www/.env

@@ -67,7 +67,7 @@ jobs:
 
       - name: Run migrations
         run: |
-          docker exec geminis-backend php artisan migrate
+          docker exec geminis-backend php artisan migrate --force
 
       - name: Run unit tests
         run: |

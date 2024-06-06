@@ -54,14 +54,14 @@ jobs:
       - name: Check MySQL connection
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "SHOW DATABASES;"
 
-      - name: Run database migrations
-        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate --verbose || exit 1
+      - name: Run all database migrations
+        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate --force || exit 1
 
       - name: Check database tables after migrations
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE test; SHOW TABLES;"
 
       - name: Run database seeders
-        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed --verbose || exit 1
+        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed --force || exit 1
 
       - name: Check database content after seeders
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE test; SELECT * FROM users;"

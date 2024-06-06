@@ -47,7 +47,9 @@ jobs:
             -e MYSQL_DATABASE=geminis \
             -e MYSQL_USER=userGeminis \
             -e MYSQL_PASSWORD=secret \
-            mysql:8
+            -p 3306:3306 \
+            mysql:8 
+            
 
       - name: Start backend container
         run: |

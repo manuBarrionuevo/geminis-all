@@ -26,7 +26,8 @@ jobs:
       - name: Copy .env file
         run: cp backend/.env.example backend/.env
 
-      - name: Build Docker image
-        run: docker build -t geminis-backend:latest -f backend/RoadRunner.Dockerfile .
+      - name: Verify Dockerfile exists
+        run: ls -l RoadRunner.Dockerfile
 
- 
+      - name: Build Docker image
+        run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .

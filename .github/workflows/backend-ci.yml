@@ -21,8 +21,6 @@ jobs:
           MYSQL_DATABASE: geminis
           MYSQL_USER: userGeminis
           MYSQL_PASSWORD: secret
-        ports:
-          - 3306:3306  # Mapea explícitamente el puerto para una mejor accesibilidad de la red
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -42,9 +40,6 @@ jobs:
       - name: Construir imagen Docker
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
 
-      - name: Iniciar contenedor MySQL
-        run: docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=geminis -e MYSQL_USER=userGeminis -e MYSQL_PASSWORD=secret -p 3306:3306 mysql:8
-
       - name: Esperar a que MySQL esté listo
         run: |
           while ! docker exec mysql mysqladmin ping --silent; do
@@ -54,7 +49,7 @@ jobs:
           echo "¡MySQL está listo!"
 
       - name: Iniciar contenedor backend
-        run: docker run -d --name geminis-backend --link mysql:mysql geminis-backend:latest
+        run: docker run -d --name geminis-backend --network github_network --env-file .env geminis-backend:latest
 
       - name: Copiar .env.example y renombrarlo a .env
         run: docker cp backend/.env.example geminis-backend:/var/www/.env

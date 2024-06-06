@@ -35,39 +35,39 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Create Docker network
+        run: docker network create ci-network
+
       - name: Build Docker image
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
 
+      - name: Start MySQL container
+        run: docker run -d --network ci-network --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test -e MYSQL_USER=user -e MYSQL_PASSWORD=password mysql:5.7
+
       - name: Wait for MySQL
         run: |
-          until docker run --network="host" --rm mysql:5.7 mysqladmin ping -h127.0.0.1 --silent; do
+          until docker run --network ci-network --rm mysql:5.7 mysqladmin ping -hmysql --silent; do
             echo "Waiting for MySQL to be ready..."
             sleep 3
           done
 
       - name: Check MySQL connection
-        run: |
-          docker run --network="host" --rm mysql:5.7 mysql -h127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+        run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "SHOW DATABASES;"
 
       - name: Run database migrations
-        run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate || exit 1
+        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate --verbose || exit 1
 
       - name: Check database tables after migrations
-        run: |
-          docker run --network="host" --rm mysql:5.7 mysql -h127.0.0.1 -uroot -proot -e "USE test; SHOW TABLES;"
+        run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE test; SHOW TABLES;"
 
       - name: Run database seeders
-        run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed || exit 1
+        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed --verbose || exit 1
 
       - name: Check database content after seeders
-        run: |
-          docker run --network="host" --rm mysql:5.7 mysql -h127.0.0.1 -uroot -proot -e "USE test; SELECT * FROM users;"
+        run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE test; SELECT * FROM users;"
 
       - name: Run unit tests
-        run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox || exit 1
+        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox || exit 1
 
       - name: Upload test results
         if: always()

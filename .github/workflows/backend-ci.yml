@@ -1,3 +1,13 @@
+name: CI for Backend
+
+on:
+  push:
+    branches:
+      - 'develop'
+  pull_request:
+    branches:
+      - 'develop'
+
 jobs:
   build-and-test:
     name: Build and Test

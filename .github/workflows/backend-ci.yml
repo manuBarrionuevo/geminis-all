@@ -54,6 +54,9 @@ jobs:
       - name: Check MySQL connection
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "SHOW DATABASES;"
 
+      - name: Show migration status
+        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate:status
+
       - name: Run all database migrations
         run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate --force || exit 1
 

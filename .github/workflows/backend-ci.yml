@@ -58,39 +58,18 @@ jobs:
         run: docker run --network ci-network geminis-backend:latest ls -la /var/www/html/database/migrations
 
       - name: Run all database migrations
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: mysql
-          DB_PORT: 3306
-          DB_DATABASE: geminis
-          DB_USERNAME: userGeminis
-          DB_PASSWORD: secret
         run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=geminis -e DB_USERNAME=userGeminis -e DB_PASSWORD=secret geminis-backend:latest php artisan migrate --force || exit 1
 
       - name: Check database tables after migrations
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE geminis; SHOW TABLES;"
 
       - name: Run database seeders
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: mysql
-          DB_PORT: 3306
-          DB_DATABASE: geminis
-          DB_USERNAME: userGeminis
-          DB_PASSWORD: secret
         run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=geminis -e DB_USERNAME=userGeminis -e DB_PASSWORD=secret geminis-backend:latest php artisan db:seed --force || exit 1
 
       - name: Check database content after seeders
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE geminis; SELECT * FROM users;"
 
       - name: Run unit tests
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: mysql
-          DB_PORT: 3306
-          DB_DATABASE: geminis
-          DB_USERNAME: userGeminis
-          DB_PASSWORD: secret
         run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=geminis -e DB_USERNAME=userGeminis -e DB_PASSWORD=secret geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox || exit 1
 
       - name: Upload test results

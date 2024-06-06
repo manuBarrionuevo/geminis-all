@@ -2,9 +2,11 @@ name: CI para Backend
 
 on:
   push:
-    branches: - 'develop'
+    branches:
+      - 'develop'
   pull_request:
-    branches: - 'develop'
+    branches:
+      - 'develop'
 
 jobs:
   build-and-test:
@@ -45,7 +47,7 @@ jobs:
 
       - name: Esperar a que MySQL esté listo
         run: |
-          while ! nc -z mysql 3306; do
+          while ! docker exec mysql mysqladmin ping --silent; do
             echo "Esperando a que MySQL esté listo..."
             sleep 5
           done

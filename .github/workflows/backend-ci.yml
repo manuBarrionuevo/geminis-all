@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'develop'
-      
   pull_request:
     branches:
       - 'develop'
@@ -26,42 +25,40 @@ jobs:
           extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
 
       - name: Install dependencies
-        working-directory: ./backend
         run: composer install --no-progress --prefer-dist --optimize-autoloader
+        working-directory: ./backend
 
       - name: Copy environment file
-        working-directory: ./backend
-        run: cp .env.example .env
+        run: cp ${GITHUB_WORKSPACE}/backend/.env.example ${GITHUB_WORKSPACE}/backend/.env
 
       - name: Generate application key
-        working-directory: ./backend
         run: php artisan key:generate
+        working-directory: ${GITHUB_WORKSPACE}/backend
 
       - name: Run unit tests
-        working-directory: ./backend
         run: ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+        working-directory: ${GITHUB_WORKSPACE}/backend
 
       - name: Copy Dockerfile and deployment files to backend
         run: |
-          cp RoadRunner.Dockerfile ./backend/RoadRunner.Dockerfile
-          cp -r deployment ./backend/deployment
+          cp ${GITHUB_WORKSPACE}/RoadRunner.Dockerfile ${GITHUB_WORKSPACE}/backend/RoadRunner.Dockerfile
+          cp -r ${GITHUB_WORKSPACE}/deployment ${GITHUB_WORKSPACE}/backend/deployment
 
       - name: Build Docker image
-        working-directory: ./backend
-        run: docker build -t geminis-backend -f RoadRunner.Dockerfile .
+        run: docker build -t geminis-backend -f ${GITHUB_WORKSPACE}/backend/RoadRunner.Dockerfile ${GITHUB_WORKSPACE}/backend
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: ./backend/coverage.xml
+          path: ${GITHUB_WORKSPACE}/backend/coverage.xml
 
       - name: Create a comment with the test results
         uses: actions/github-script@v3
         with:
           script: |
             const fs = require('fs');
-            const report = fs.readFileSync('backend/coverage.xml', 'utf8');
+            const report = fs.readFileSync('${GITHUB_WORKSPACE}/backend/coverage.xml', 'utf8');
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,

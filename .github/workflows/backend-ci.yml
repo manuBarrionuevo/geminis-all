@@ -42,7 +42,7 @@ jobs:
 
       - name: Esperar a que MySQL esté listo
         run: |
-          while ! docker exec mysql mysqladmin ping --silent; do
+          until docker run --network github_network mysql:8 mysqladmin ping -h mysql --silent; do
             echo "Esperando a que MySQL esté listo..."
             sleep 5
           done

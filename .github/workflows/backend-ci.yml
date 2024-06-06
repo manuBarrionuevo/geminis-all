@@ -1,0 +1,59 @@
+name: "Backend Continuous Integration"
+on:
+  push:
+    branches:
+      - 'develop'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'develop'
+
+jobs:
+  build:
+    name: Build and Test Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Run unit tests
+        run: ./vendor/bin/phpunit --coverage-text
+
+      - name: Build Docker image
+        run: docker build -f RoadRunner.Dockerfile -t geminis-backend .
+
+      - name: Run SonarQube analysis
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          host: ${{ secrets.SONAR_HOST_URL }}
+          login: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Create a comment with the test results
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('coverage/coverage.txt', 'utf8');
+            github.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: `### Test Coverage Report\n\`\`\`\n${report}\n\`\`\``
+            });

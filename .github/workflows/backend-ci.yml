@@ -38,6 +38,9 @@ jobs:
       - name: Create Docker network
         run: docker network create ci-network
 
+      - name: Copy .env file
+        run: cp backend/.env.example backend/.env
+
       - name: Build Docker image
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
 
@@ -53,6 +56,9 @@ jobs:
 
       - name: Check MySQL connection
         run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "SHOW DATABASES;"
+
+      - name: Copy .env file into Docker container
+        run: docker cp backend/.env $(docker ps -qf "name=geminis-backend"):/.env
 
       - name: List migration files
         run: docker run --network ci-network geminis-backend:latest ls -la /var/www/html/database/migrations

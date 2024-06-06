@@ -23,11 +23,11 @@ jobs:
           MYSQL_PASSWORD: secret
         ports:
           - 3306:3306  # Mapea explícitamente el puerto para una mejor accesibilidad de la red
-        options:
-          - --health-cmd="mysqladmin ping --silent"
-          - --health-interval=10s
-          - --health-timeout=5s
-          - --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - name: Extraer código

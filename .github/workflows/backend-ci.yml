@@ -53,6 +53,14 @@ jobs:
         run: |
           docker run -d --name geminis-backend --link mysql:mysql geminis-backend:latest
 
+      - name: Install dockerize
+        run: |
+          wget -qO- https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz | tar xvz -C /usr/local/bin
+
+      - name: Wait for MySQL
+        run: |
+          docker exec geminis-backend dockerize -wait tcp://mysql:3306 -timeout 1m
+
       - name: Copy .env.example and rename to .env
         run: |
           docker cp backend/.env.example geminis-backend:/var/www/.env

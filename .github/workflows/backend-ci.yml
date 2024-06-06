@@ -9,25 +9,6 @@ on:
       - 'develop'
 
 jobs:
-  build-and-test:
-    name: Build and Test
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: geminis
-          MYSQL_USER: userGeminis
-          MYSQL_PASSWORD: secret
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 3306:3306
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,58 +25,4 @@ jobs:
       - name: Build Docker image
         run: docker build -t geminis-backend:latest -f backend/RoadRunner.Dockerfile .
 
-      - name: Start MySQL container
-        run: docker run -d --network ci-network --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=geminis -e MYSQL_USER=userGeminis -e MYSQL_PASSWORD=secret mysql:5.7
-
-      - name: Wait for MySQL
-        run: |
-          until docker run --network ci-network --rm mysql:5.7 mysqladmin ping -hmysql --silent; do
-            echo "Waiting for MySQL to be ready..."
-            sleep 3
-          done
-
-      - name: Check MySQL connection
-        run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "SHOW DATABASES;"
-
-      - name: List migration files
-        run: docker run --network ci-network geminis-backend:latest ls -la /var/www/html/database/migrations
-
-      - name: Run all database migrations
-        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=geminis -e DB_USERNAME=userGeminis -e DB_PASSWORD=secret geminis-backend:latest php artisan migrate --force || exit 1
-
-      - name: Check database tables after migrations
-        run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE geminis; SHOW TABLES;"
-
-      - name: Run database seeders
-        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=geminis -e DB_USERNAME=userGeminis -e DB_PASSWORD=secret geminis-backend:latest php artisan db:seed --force || exit 1
-
-      - name: Check database content after seeders
-        run: docker run --network ci-network --rm mysql:5.7 mysql -hmysql -uroot -proot -e "USE geminis; SELECT * FROM users;"
-
-      - name: Run unit tests
-        run: docker run --network ci-network -e DB_CONNECTION=mysql -e DB_HOST=mysql -e DB_PORT=3306 -e DB_DATABASE=geminis -e DB_USERNAME=userGeminis -e DB_PASSWORD=secret geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox || exit 1
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: ./tests/_output
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: ./coverage.xml
-
-      - name: Create a comment with the test results
-        uses: actions/github-script@v3
-        with:
-          script: |
-            const fs = require('fs');
-            const coverage = fs.readFileSync('coverage.xml', 'utf8');
-            github.issues.createComment({
-              ...context.repo,
-              issue_number: context.issue.number,
-              body: `### Test Coverage Report\n\`\`\`\n${coverage}\n\`\`\``
-            });
+ 

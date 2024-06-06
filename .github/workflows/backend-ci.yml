@@ -18,13 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Create Docker network
-        run: docker network create ci-network
-
-      - name: Copy .env file
-        run: cp backend/.env.example backend/.env
+        uses: docker/setup-buildx-action@v3 
 
       - name: Verify Dockerfile exists
         run: ls -l RoadRunner.Dockerfile

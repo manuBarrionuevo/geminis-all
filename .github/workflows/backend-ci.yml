@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - 'develop'
-    tags:
-      - 'v*'
+      
   pull_request:
     branches:
       - 'develop'
@@ -49,7 +48,7 @@ jobs:
 
       - name: Build Docker image
         working-directory: ./backend
-        run: docker build -f RoadRunner.Dockerfile -t geminis-backend .
+        run: docker build -t geminis-backend -f RoadRunner.Dockerfile .
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2

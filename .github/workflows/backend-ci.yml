@@ -34,7 +34,7 @@ jobs:
         run: php ./backend/artisan key:generate
 
       - name: Run unit tests
-        run: ./backend/vendor/bin/phpunit --coverage-text --coverage-clover=./backend/coverage.xml
+        run: ./backend/vendor/bin/phpunit -c ./backend/phpunit.xml --coverage-text --coverage-clover=./backend/coverage.xml
 
       - name: Copy Dockerfile and deployment files to backend
         run: |

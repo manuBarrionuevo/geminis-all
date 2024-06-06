@@ -25,38 +25,38 @@ jobs:
           extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
 
       - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader --working-dir=./backend
+        run: composer install --no-progress --prefer-dist --optimize-autoloader --working-dir=backend
 
       - name: Copy environment file
-        run: cp ./backend/.env.example ./backend/.env
+        run: cp $GITHUB_WORKSPACE/backend/.env.example $GITHUB_WORKSPACE/backend/.env
 
       - name: Generate application key
-        run: php ./backend/artisan key:generate
+        run: php $GITHUB_WORKSPACE/backend/artisan key:generate
 
       - name: Run unit tests
-        run: ./backend/vendor/bin/phpunit -c ./backend/phpunit.xml --coverage-text --coverage-clover=./backend/coverage.xml
+        run: php $GITHUB_WORKSPACE/backend/vendor/bin/phpunit --configuration $GITHUB_WORKSPACE/backend/phpunit.xml --coverage-text --coverage-clover=$GITHUB_WORKSPACE/backend/coverage.xml
 
       - name: Copy Dockerfile and deployment files to backend
         run: |
-          cp ./RoadRunner.Dockerfile ./backend/RoadRunner.Dockerfile
-          mkdir -p ./backend/deployment
-          cp -r ./deployment/* ./backend/deployment/
+          cp $GITHUB_WORKSPACE/RoadRunner.Dockerfile $GITHUB_WORKSPACE/backend/RoadRunner.Dockerfile
+          mkdir -p $GITHUB_WORKSPACE/backend/deployment
+          cp -r $GITHUB_WORKSPACE/deployment/* $GITHUB_WORKSPACE/backend/deployment/
 
       - name: Build Docker image
-        run: docker build -t geminis-backend -f ./backend/RoadRunner.Dockerfile ./backend
+        run: docker build -t geminis-backend -f $GITHUB_WORKSPACE/backend/RoadRunner.Dockerfile $GITHUB_WORKSPACE/backend
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: ./backend/coverage.xml
+          path: $GITHUB_WORKSPACE/backend/coverage.xml
 
       - name: Create a comment with the test results
         uses: actions/github-script@v3
         with:
           script: |
             const fs = require('fs');
-            const report = fs.readFileSync('./backend/coverage.xml', 'utf8');
+            const report = fs.readFileSync(process.env.GITHUB_WORKSPACE + '/backend/coverage.xml', 'utf8');
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,

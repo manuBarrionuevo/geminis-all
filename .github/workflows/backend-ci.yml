@@ -1,18 +1,16 @@
-name: CI for Backend
+name: CI para Backend
 
 on:
   push:
-    branches:
-      - 'develop'
+    branches: - 'develop'
   pull_request:
-    branches:
-      - 'develop'
+    branches: - 'develop'
 
 jobs:
   build-and-test:
-    name: Build and Test
+    name: Construir y Probar
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:8
@@ -21,56 +19,49 @@ jobs:
           MYSQL_DATABASE: geminis
           MYSQL_USER: userGeminis
           MYSQL_PASSWORD: secret
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-    
+        ports:
+          - 3306:3306  # Mapea explícitamente el puerto para una mejor accesibilidad de la red
+        options:
+          - --health-cmd="mysqladmin ping --silent"
+          - --health-interval=10s
+          - --health-timeout=5s
+          - --health-retries=3
+
     steps:
-      - name: Checkout code
+      - name: Extraer código
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
+      - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Verify Dockerfile exists
+      - name: Verificar que Dockerfile exista
         run: ls -l RoadRunner.Dockerfile
 
-      - name: Build Docker image
+      - name: Construir imagen Docker
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
 
-      - name: Start MySQL container
-        run: |
-          docker run -d --name mysql \
-            -e MYSQL_ROOT_PASSWORD=secret \
-            -e MYSQL_DATABASE=geminis \
-            -e MYSQL_USER=userGeminis \
-            -e MYSQL_PASSWORD=secret \
-            -p 3306:3306 \
-            mysql:8 
-            
+      - name: Iniciar contenedor MySQL
+        run: docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=geminis -e MYSQL_USER=userGeminis -e MYSQL_PASSWORD=secret -p 3306:3306 mysql:8
 
-      - name: Start backend container
+      - name: Esperar a que MySQL esté listo
         run: |
-          docker run -d --name geminis-backend --link mysql:mysql geminis-backend:latest
+          while ! nc -z mysql 3306; do
+            echo "Esperando a que MySQL esté listo..."
+            sleep 5
+          done
+          echo "¡MySQL está listo!"
 
-      - name: Wait for MySQL to be ready
-        run: |
-          while ! docker exec mysql mysqladmin ping --silent; do sleep 5; done
+      - name: Iniciar contenedor backend
+        run: docker run -d --name geminis-backend --link mysql:mysql geminis-backend:latest
 
-      - name: Copy .env.example and rename to .env
-        run: |
-          docker cp backend/.env.example geminis-backend:/var/www/.env
+      - name: Copiar .env.example y renombrarlo a .env
+        run: docker cp backend/.env.example geminis-backend:/var/www/.env
 
-      - name: Update .env for MySQL
-        run: |
-          docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
+      - name: Actualizar .env para MySQL
+        run: docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
 
-      - name: Run migrations
-        run: |
-          docker exec geminis-backend php artisan migrate --force || (docker logs mysql && docker logs geminis-backend && exit 1)
+      - name: Ejecutar migraciones
+        run: docker exec geminis-backend php artisan migrate --force
 
-      - name: Run unit tests
-        run: |
-          docker exec geminis-backend vendor/bin/phpunit || (docker logs mysql && docker logs geminis-backend && exit 1)
+      - name: Ejecutar pruebas unitarias
+        run: docker exec geminis-backend vendor/bin/phpunit

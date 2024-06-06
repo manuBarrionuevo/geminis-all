@@ -25,40 +25,41 @@ jobs:
           extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
 
       - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
         working-directory: ./backend
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Copy environment file
-        run: cp ${GITHUB_WORKSPACE}/backend/.env.example ${GITHUB_WORKSPACE}/backend/.env
+        run: cp ${{ github.workspace }}/backend/.env.example ${{ github.workspace }}/backend/.env
 
       - name: Generate application key
+        working-directory: ${{ github.workspace }}/backend
         run: php artisan key:generate
-        working-directory: ${GITHUB_WORKSPACE}/backend
 
       - name: Run unit tests
+        working-directory: ${{ github.workspace }}/backend
         run: ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
-        working-directory: ${GITHUB_WORKSPACE}/backend
 
       - name: Copy Dockerfile and deployment files to backend
         run: |
-          cp ${GITHUB_WORKSPACE}/RoadRunner.Dockerfile ${GITHUB_WORKSPACE}/backend/RoadRunner.Dockerfile
-          cp -r ${GITHUB_WORKSPACE}/deployment ${GITHUB_WORKSPACE}/backend/deployment
+          cp ${{ github.workspace }}/RoadRunner.Dockerfile ${{ github.workspace }}/backend/RoadRunner.Dockerfile
+          cp -r ${{ github.workspace }}/deployment ${{ github.workspace }}/backend/deployment
 
       - name: Build Docker image
-        run: docker build -t geminis-backend -f ${GITHUB_WORKSPACE}/backend/RoadRunner.Dockerfile ${GITHUB_WORKSPACE}/backend
+        working-directory: ${{ github.workspace }}/backend
+        run: docker build -t geminis-backend -f ${{ github.workspace }}/backend/RoadRunner.Dockerfile .
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: ${GITHUB_WORKSPACE}/backend/coverage.xml
+          path: ${{ github.workspace }}/backend/coverage.xml
 
       - name: Create a comment with the test results
         uses: actions/github-script@v3
         with:
           script: |
             const fs = require('fs');
-            const report = fs.readFileSync('${GITHUB_WORKSPACE}/backend/coverage.xml', 'utf8');
+            const report = fs.readFileSync('${{ github.workspace }}/backend/coverage.xml', 'utf8');
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,

@@ -1,59 +1,53 @@
-name: "Backend Continuous Integration"
+name: CI/CD Pipeline
+
 on:
   push:
     branches:
-      - 'develop'
-    tags:
-      - 'v*'
+      - main
   pull_request:
     branches:
-      - 'develop'
+      - main
 
 jobs:
   build:
-    name: Build and Test Backend
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.0'
 
-      - name: Install dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+    - name: Install Composer dependencies
+      working-directory: ./backend
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Run unit tests
-        run: ./vendor/bin/phpunit --coverage-text
+    - name: Run unit tests
+      working-directory: ./backend
+      run: php artisan test
 
-      - name: Build Docker image
-        run: docker build -f RoadRunner.Dockerfile -t geminis-backend .
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
-      - name: Run SonarQube analysis
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          host: ${{ secrets.SONAR_HOST_URL }}
-          login: ${{ secrets.SONAR_TOKEN }}
+    - name: Install Node.js dependencies
+      working-directory: ./frontend
+      run: npm install
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-report
-          path: coverage/
+    - name: Run frontend tests
+      working-directory: ./frontend
+      run: npm test
 
-      - name: Create a comment with the test results
-        uses: actions/github-script@v3
-        with:
-          script: |
-            const fs = require('fs');
-            const report = fs.readFileSync('coverage/coverage.txt', 'utf8');
-            github.issues.createComment({
-              ...context.repo,
-              issue_number: context.issue.number,
-              body: `### Test Coverage Report\n\`\`\`\n${report}\n\`\`\``
-            });
+    - name: Set up SonarQube
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner \
+        -Dsonar.projectKey=your_project_key \
+        -Dsonar.sources=./backend,./frontend \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}

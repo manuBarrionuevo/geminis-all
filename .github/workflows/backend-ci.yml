@@ -42,8 +42,10 @@ jobs:
         working-directory: ./backend
         run: ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
-      - name: Copy Dockerfile to backend
-        run: cp RoadRunner.Dockerfile ./backend/RoadRunner.Dockerfile
+      - name: Copy Dockerfile and deployment files to backend
+        run: |
+          cp RoadRunner.Dockerfile ./backend/RoadRunner.Dockerfile
+          cp -r deployment ./backend/deployment
 
       - name: Build Docker image
         working-directory: ./backend

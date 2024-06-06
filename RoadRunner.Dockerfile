@@ -27,8 +27,10 @@ RUN apt-get update && apt-get install -y \
     lua-zlib-dev \
     libmemcached-dev \
     default-mysql-client \
-    nginx \
-    supervisor
+    nginx
+
+# Install supervisor
+RUN apt-get install -y supervisor
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -37,11 +39,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add user for laravel application
-RUN groupadd -g 1000 www && \
-    useradd -u 1000 -ms /bin/bash -g www www
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy code to /var/www
-COPY --chown=www:www backend /var/www
+COPY --chown=www:www-data backend/ /var/www/
 
 # Copy nginx/php/supervisor configs
 COPY deployment/supervisor.conf /etc/supervisord.conf
@@ -50,21 +52,21 @@ COPY deployment/nginx.conf /etc/nginx/sites-enabled/default
 COPY deployment/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY deployment/run.sh /var/www/docker/run.sh
 
-# Copy migrations to the correct location
 COPY backend/database/migrations /var/www/html/database/migrations
 
 # PHP Error Log Files
-RUN mkdir /var/log/php && \
-    touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
+RUN mkdir /var/log/php
+RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
+
+RUN chown -Rf www-data:www-data /var/www
 
 # Deployment steps
-RUN composer install --optimize-autoloader && \
-    chmod +x /var/www/docker/run.sh
+RUN composer install --optimize-autoloader
+RUN chmod +x /var/www/docker/run.sh
 
-# Set permissions for Laravel
-RUN chown -Rf www-data:www-data /var/www && \
-    chmod -R ug+w /var/www/storage && \
-    chmod -R 777 /var/www/storage
+# add root to www group
+RUN chmod -R ug+w /var/www/storage
+RUN chmod -R 777 /var/www/storage
 
 EXPOSE 80
 ENTRYPOINT ["/var/www/docker/run.sh"]

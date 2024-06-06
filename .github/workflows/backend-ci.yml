@@ -49,13 +49,17 @@ jobs:
         run: |
           docker run --network="host" --rm mysql:5.7 mysql -h127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
 
-      - name: Run database migrations and seeders
+      - name: Run database migrations
         run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate --seed
+          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate
 
       - name: Check database tables
         run: |
           docker run --network="host" --rm mysql:5.7 mysql -h127.0.0.1 -uroot -proot -e "USE test; SHOW TABLES;"
+
+      - name: Run database seeders
+        run: |
+          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed
 
       - name: Run unit tests
         run: |

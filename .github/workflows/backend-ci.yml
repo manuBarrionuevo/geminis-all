@@ -51,7 +51,7 @@ jobs:
 
       - name: Run database migrations
         run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate
+          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan migrate || exit 1
 
       - name: Check database tables
         run: |
@@ -59,11 +59,15 @@ jobs:
 
       - name: Run database seeders
         run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed
+          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest php artisan db:seed || exit 1
+
+      - name: Check database content
+        run: |
+          docker run --network="host" --rm mysql:5.7 mysql -h127.0.0.1 -uroot -proot -e "USE test; SELECT * FROM users;"
 
       - name: Run unit tests
         run: |
-          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox
+          docker run --network="host" -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=3306 -e DB_DATABASE=test -e DB_USERNAME=user -e DB_PASSWORD=password geminis-backend:latest ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --testdox || exit 1
 
       - name: Upload test results
         if: always()

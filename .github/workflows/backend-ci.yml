@@ -1,53 +1,61 @@
-name: CI/CD Pipeline
+
+name: "Backend Continuous Integration"
 
 on:
   push:
     branches:
-      - develop
+      - 'develop'
+    tags:
+      - 'v*'
   pull_request:
     branches:
-      - develop
+      - 'develop'
 
 jobs:
   build:
+    name: Build and Test Backend
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, zip, exif, pcntl, opcache
 
-    - name: Install Composer dependencies
-      working-directory: ./backend
-      run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Install dependencies
+        working-directory: ./backend
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    - name: Run unit tests
-      working-directory: ./backend
-      run: php artisan test
+      - name: Run unit tests
+        working-directory: ./backend
+        run: ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
+      - name: Copy Dockerfile to backend
+        run: cp RoadRunner.Dockerfile ./backend/RoadRunner.Dockerfile
 
-    - name: Install Node.js dependencies
-      working-directory: ./frontend
-      run: npm install
+      - name: Build Docker image
+        working-directory: ./backend
+        run: docker build -f RoadRunner.Dockerfile -t geminis-backend .
 
-    - name: Run frontend tests
-      working-directory: ./frontend
-      run: npm test
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: ./backend/coverage.xml
 
-    - name: Set up SonarQube
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner \
-        -Dsonar.projectKey=your_project_key \
-        -Dsonar.sources=./backend,./frontend \
-        -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Create a comment with the test results
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('backend/coverage.xml', 'utf8');
+            github.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: `### Test Coverage Report\n\`\`\`\n${report}\n\`\`\``
+            });

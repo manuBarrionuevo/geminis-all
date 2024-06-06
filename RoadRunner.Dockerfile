@@ -52,6 +52,8 @@ COPY deployment/nginx.conf /etc/nginx/sites-enabled/default
 COPY deployment/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY deployment/run.sh /var/www/docker/run.sh
 
+COPY backend/database/migrations /var/www/html/database/migrations
+
 # PHP Error Log Files
 RUN mkdir /var/log/php
 RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log

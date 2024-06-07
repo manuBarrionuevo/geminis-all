@@ -105,14 +105,14 @@ jobs:
           distribution: 'adopt'
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@v1.5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.organization=your_organization_key
-            -Dsonar.projectKey=your_project_key
-            -Dsonar.sources=.
+        run: |
+          export PATH="$JAVA_HOME/bin:$PATH"
+          sonar-scanner \
+            -Dsonar.organization=your_organization_key \
+            -Dsonar.projectKey=your_project_key \
+            -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io
 
       - name: Clean up Docker containers and network

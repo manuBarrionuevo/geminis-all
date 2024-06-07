@@ -48,19 +48,24 @@ jobs:
           docker exec geminis-backend vendor/bin/phpunit --log-junit /var/www/test-results-unit.xml
           docker exec geminis-backend php vendor/bin/phpunit --testsuite integration --log-junit /var/www/test-results-integration.xml
 
+      - name: Copy test results to host
+        run: |
+          docker cp geminis-backend:/var/www/test-results-unit.xml test-results-unit.xml
+          docker cp geminis-backend:/var/www/test-results-integration.xml test-results-integration.xml
+
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:
           name: test-results
-          path: /var/www/test-results*.xml
+          path: ./*.xml
 
       - name: Post test results to PR
         uses: actions/github-script@v3
         with:
           script: |
             const fs = require('fs');
-            const unitTestResults = fs.readFileSync('/var/www/test-results-unit.xml', 'utf8');
-            const integrationTestResults = fs.readFileSync('/var/www/test-results-integration.xml', 'utf8');
+            const unitTestResults = fs.readFileSync('test-results-unit.xml', 'utf8');
+            const integrationTestResults = fs.readFileSync('test-results-integration.xml', 'utf8');
             const body = `
             ## Unit Test Results:
             ${unitTestResults}

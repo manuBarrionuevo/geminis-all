@@ -77,7 +77,9 @@ jobs:
 
       - name: Ejecutar pruebas unitarias
         run: docker exec geminis-backend vendor/bin/phpunit
-
+      - name: Forzar la eliminación de todos los contenedores
+        if: always()
+        run: docker rm -f $(docker ps -a -q)
       - name: Limpiar la red Docker
         if: always()
-        run: docker network rm github_network
+        run: docker network rm github_network || true

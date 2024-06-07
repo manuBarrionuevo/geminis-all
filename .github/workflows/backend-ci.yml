@@ -13,29 +13,12 @@ jobs:
     name: Construir y Probar
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: secret
-          MYSQL_DATABASE: geminis
-          MYSQL_USER: userGeminis
-          MYSQL_PASSWORD: secret
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
       - name: Extraer código
         uses: actions/checkout@v4
 
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Verificar que Dockerfile exista
-        run: ls -l RoadRunner.Dockerfile
 
       - name: Construir imagen Docker
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
@@ -57,29 +40,23 @@ jobs:
       - name: Iniciar contenedor backend
         run: docker run -d --name geminis-backend --network github_network geminis-backend:latest
 
-      - name: Copiar .env.example y renombrarlo a .env
-        run: docker cp backend/.env.example geminis-backend:/var/www/.env
-
-      - name: Actualizar .env para MySQL
-        run: docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
-
-      - name: Generar clave de aplicación
-        run: docker exec geminis-backend php artisan key:generate
-
-      - name: Verificar contenido de .env
-        run: docker exec geminis-backend cat /var/www/.env
-
-      - name: Verificar conexión MySQL desde el contenedor backend
-        run: docker exec geminis-backend sh -c "mysql -hmysql -uuserGeminis -psecret -e 'SHOW DATABASES;'"
+      - name: Configurar y verificar el entorno
+        run: |
+          docker cp backend/.env.example geminis-backend:/var/www/.env
+          docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
+          docker exec geminis-backend php artisan key:generate
+          docker exec geminis-backend cat /var/www/.env
+          docker exec geminis-backend sh -c "mysql -hmysql -uuserGeminis -psecret -e 'SHOW DATABASES;'"
 
       - name: Ejecutar migraciones
         run: docker exec geminis-backend php artisan migrate --force
 
       - name: Ejecutar pruebas unitarias
         run: docker exec geminis-backend vendor/bin/phpunit
-      - name: Forzar la eliminación de todos los contenedores
+
+      - name: Limpiar contenedores y red Docker
         if: always()
-        run: docker rm -f $(docker ps -a -q)
-      - name: Limpiar la red Docker
-        if: always()
-        run: docker network rm github_network || true
+        run: |
+          docker rm -f geminis-backend || true
+          docker rm -f mysql || true
+          docker network rm github_network || true

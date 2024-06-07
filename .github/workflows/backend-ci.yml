@@ -63,6 +63,9 @@ jobs:
       - name: Actualizar .env para MySQL
         run: docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
 
+      - name: Generar clave de aplicación
+        run: docker exec geminis-backend php artisan key:generate
+
       - name: Verificar contenido de .env
         run: docker exec geminis-backend cat /var/www/.env
 

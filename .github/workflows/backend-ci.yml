@@ -55,7 +55,7 @@ jobs:
           echo "¡MySQL está listo!"
 
       - name: Iniciar contenedor backend
-        run: docker run -d --name geminis-backend --network github_network --env-file .env geminis-backend:latest
+        run: docker run -d --name geminis-backend --network github_network geminis-backend:latest
 
       - name: Copiar .env.example y renombrarlo a .env
         run: docker cp backend/.env.example geminis-backend:/var/www/.env
@@ -63,8 +63,18 @@ jobs:
       - name: Actualizar .env para MySQL
         run: docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
 
+      - name: Verificar contenido de .env
+        run: docker exec geminis-backend cat /var/www/.env
+
+      - name: Verificar conexión MySQL desde el contenedor backend
+        run: docker exec geminis-backend sh -c "mysql -hmysql -uuserGeminis -psecret -e 'SHOW DATABASES;'"
+
       - name: Ejecutar migraciones
         run: docker exec geminis-backend php artisan migrate --force
 
       - name: Ejecutar pruebas unitarias
         run: docker exec geminis-backend vendor/bin/phpunit
+
+      - name: Limpiar la red Docker
+        if: always()
+        run: docker network rm github_network

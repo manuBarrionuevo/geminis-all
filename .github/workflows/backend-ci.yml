@@ -98,6 +98,15 @@ jobs:
               });
             }
 
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectKey: your_project_key
+          organization: your_organization_key
+          scannerMode: cli
+
       - name: Clean up Docker containers and network
         if: always()
         run: |

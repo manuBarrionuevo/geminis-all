@@ -10,51 +10,72 @@ on:
 
 jobs:
   build-and-test:
-    name: Construir y Probar
     runs-on: ubuntu-latest
 
     steps:
-      - name: Extraer código
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configurar Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Construir imagen Docker
+      - name: Build Docker image
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
 
-      - name: Crear red Docker
+      - name: Create Docker network
         run: docker network create github_network
 
-      - name: Iniciar contenedor MySQL
+      - name: Start MySQL container
         run: docker run -d --name mysql --network github_network -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=geminis -e MYSQL_USER=userGeminis -e MYSQL_PASSWORD=secret mysql:8
 
-      - name: Esperar a que MySQL esté listo
+      - name: Wait for MySQL to be ready
         run: |
           until docker run --rm --network github_network mysql:8 mysqladmin ping -h mysql --silent; do
-            echo "Esperando a que MySQL esté listo..."
+            echo "Waiting for MySQL to be ready..."
             sleep 5
           done
-          echo "¡MySQL está listo!"
+          echo "MySQL is ready!"
 
-      - name: Iniciar contenedor backend
+      - name: Start backend container
         run: docker run -d --name geminis-backend --network github_network geminis-backend:latest
 
-      - name: Configurar y verificar el entorno
+      - name: Configure environment and run tests
         run: |
           docker cp backend/.env.example geminis-backend:/var/www/.env
           docker exec geminis-backend sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' /var/www/.env
           docker exec geminis-backend php artisan key:generate
-          docker exec geminis-backend cat /var/www/.env
-          docker exec geminis-backend sh -c "mysql -hmysql -uuserGeminis -psecret -e 'SHOW DATABASES;'"
+          docker exec geminis-backend php artisan migrate --force
+          docker exec geminis-backend vendor/bin/phpunit --log-junit /var/www/test-results-unit.xml
+          docker exec geminis-backend php vendor/bin/phpunit --testsuite integration --log-junit /var/www/test-results-integration.xml
 
-      - name: Ejecutar migraciones
-        run: docker exec geminis-backend php artisan migrate --force
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: /var/www/test-results*.xml
 
-      - name: Ejecutar pruebas unitarias
-        run: docker exec geminis-backend vendor/bin/phpunit
+      - name: Post test results to PR
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const fs = require('fs');
+            const unitTestResults = fs.readFileSync('/var/www/test-results-unit.xml', 'utf8');
+            const integrationTestResults = fs.readFileSync('/var/www/test-results-integration.xml', 'utf8');
+            const body = `
+            ## Unit Test Results:
+            ${unitTestResults}
 
-      - name: Limpiar contenedores y red Docker
+            ## Integration Test Results:
+            ${integrationTestResults}
+            `;
+            github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: body
+            });
+
+      - name: Clean up Docker containers and network
         if: always()
         run: |
           docker rm -f geminis-backend || true

@@ -76,7 +76,7 @@ jobs:
           sudo apt-get install -y wget unzip
           wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
           unzip sonar-scanner-cli-4.6.2.2472-linux.zip
-          echo 'sonar-scanner-4.6.2.2472-linux/bin' >> $GITHUB_PATH
+          echo "$(pwd)/sonar-scanner-4.6.2.2472-linux/bin" >> $GITHUB_PATH
 
       - name: SonarQube Scan
         env:
@@ -88,4 +88,43 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io
 
-      - name: Post test results 
+      - name: Post test results to PR or Commit
+        uses: actions/github-script@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          script: |
+            const fs = require('fs');
+            const unitTestResults = fs.readFileSync('test-results-unit.xml', 'utf8');
+            const integrationTestResults = fs.readFileSync('test-results-integration.xml', 'utf8');
+            const body = `
+            ## Unit Test Results:
+            ${unitTestResults}
+
+            ## Integration Test Results:
+            ${integrationTestResults}
+            `;
+
+            if (context.eventName === 'pull_request') {
+              github.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: body
+              });
+            } else if (context.eventName === 'push') {
+              const commitSha = context.sha;
+              github.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: commitSha,
+                body: body
+              });
+            }
+
+      - name: Clean up Docker containers and network
+        if: always()
+        run: |
+          docker rm -f geminis-backend || true
+          docker rm -f mysql || true
+          docker network rm github_network || true

@@ -42,7 +42,7 @@ jobs:
 
       - name: Esperar a que MySQL esté listo
         run: |
-          until docker exec ${'mysql'} mysqladmin ping --silent; do
+          until docker exec mysql mysqladmin ping --silent; do
             echo "Esperando a que MySQL esté listo..."
             sleep 5
           done

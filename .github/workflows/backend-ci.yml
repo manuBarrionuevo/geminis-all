@@ -40,8 +40,11 @@ jobs:
       - name: Construir imagen Docker
         run: docker build -t geminis-backend:latest -f RoadRunner.Dockerfile .
 
-      - name: Iniciar contenedor backend
-        run: docker run -d --name geminis-backend --network github_network --env-file .env geminis-backend:latest
+      - name: Crear red Docker
+        run: docker network create github_network
+
+      - name: Iniciar contenedor MySQL
+        run: docker run -d --name mysql --network github_network -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=geminis -e MYSQL_USER=userGeminis -e MYSQL_PASSWORD=secret mysql:8
 
       - name: Esperar a que MySQL esté listo
         run: |
@@ -50,6 +53,9 @@ jobs:
             sleep 5
           done
           echo "¡MySQL está listo!"
+
+      - name: Iniciar contenedor backend
+        run: docker run -d --name geminis-backend --network github_network --env-file .env geminis-backend:latest
 
       - name: Copiar .env.example y renombrarlo a .env
         run: docker cp backend/.env.example geminis-backend:/var/www/.env

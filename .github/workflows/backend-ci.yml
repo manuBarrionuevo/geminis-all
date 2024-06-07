@@ -60,6 +60,7 @@ jobs:
           path: ./*.xml
 
       - name: Post test results to PR
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v3
         with:
           script: |

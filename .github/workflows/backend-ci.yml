@@ -42,7 +42,7 @@ jobs:
 
       - name: Esperar a que MySQL esté listo
         run: |
-          until docker run --rm --network ${{ job.services.mysql.networks.default }} mysql:8 sh -c 'mysqladmin ping -h mysql --silent'; do
+          until docker run --rm --network ${{ job.services.mysql.networks.default }} mysql:8 mysqladmin ping -h mysql --silent; do
             echo "Esperando a que MySQL esté listo..."
             sleep 5
           done

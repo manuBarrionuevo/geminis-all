@@ -59,8 +59,7 @@ jobs:
           name: test-results
           path: ./*.xml
 
-      - name: Post test results to PR
-        if: github.event_name == 'pull_request'
+      - name: Post test results to PR or Commit
         uses: actions/github-script@v3
         with:
           script: |
@@ -74,12 +73,23 @@ jobs:
             ## Integration Test Results:
             ${integrationTestResults}
             `;
-            github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: body
-            });
+
+            if (context.eventName === 'pull_request') {
+              github.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: body
+              });
+            } else if (context.eventName === 'push') {
+              const commitSha = context.sha;
+              github.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: commitSha,
+                body: body
+              });
+            }
 
       - name: Clean up Docker containers and network
         if: always()

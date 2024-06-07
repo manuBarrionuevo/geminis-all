@@ -61,6 +61,8 @@ jobs:
 
       - name: Post test results to PR or Commit
         uses: actions/github-script@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           script: |
             const fs = require('fs');

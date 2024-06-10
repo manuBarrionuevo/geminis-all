@@ -79,31 +79,22 @@ jobs:
         run: |
           if [ -f phpcs-result.txt ]; then echo "file-exists=true" >> $GITHUB_ENV; else echo "file-exists=false" >> $GITHUB_ENV; fi
 
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh -y
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
       - name: Post PHP_CodeSniffer results to PR or Commit
         if: env.file-exists == 'true'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const phpcsResults = fs.readFileSync('phpcs-result.txt', 'utf8');
-            const body = `## PHP_CodeSniffer results:\n\`\`\`\n${phpcsResults}\n\`\`\``;
-            
-            if (context.payload.pull_request) {
-              github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            } else {
-              github.rest.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha,
-                body: body
-              });
-            }
+        run: |
+          phpcsResults=$(cat phpcs-result.txt)
+          body="## PHP_CodeSniffer results:\n\`\`\`\n$phpcsResults\n\`\`\`"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            gh pr comment ${{ github.event.pull_request.number }} --body "$body"
+          else
+            gh api repos/${{ github.repository }}/commits/${{ github.sha }}/comments --field body="$body"
+          fi
 
       - name: Send alert to Teams if PHP_CodeSniffer fails
         if: failure()
@@ -120,41 +111,15 @@ jobs:
 
       - name: Post test results to PR or Commit
         if: always()
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            let unitTestResults = '';
-            let integrationTestResults = '';
-            if (fs.existsSync('test-results-unit.xml')) {
-              unitTestResults = fs.readFileSync('test-results-unit.xml', 'utf8');
-            }
-            if (fs.existsSync('test-results-integration.xml')) {
-              integrationTestResults = fs.readFileSync('test-results-integration.xml', 'utf8');
-            }
-            const body = `
-            ## Unit Test Results:
-            ${unitTestResults}
-
-            ## Integration Test Results:
-            ${integrationTestResults}
-            `;
-            if (context.payload.pull_request) {
-              github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            } else {
-              github.rest.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha,
-                body: body
-              });
-            }
+        run: |
+          unitTestResults=$(cat test-results-unit.xml)
+          integrationTestResults=$(cat test-results-integration.xml)
+          body="## Unit Test Results:\n$unitTestResults\n\n## Integration Test Results:\n$integrationTestResults"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            gh pr comment ${{ github.event.pull_request.number }} --body "$body"
+          else
+            gh api repos/${{ github.repository }}/commits/${{ github.sha }}/comments --field body="$body"
+          fi
 
       - name: Clean up Docker containers and network
         if: always()

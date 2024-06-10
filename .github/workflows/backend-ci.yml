@@ -53,10 +53,17 @@ jobs:
           docker exec geminis-backend vendor/bin/phpunit --log-junit /var/www/test-results-unit.xml
           docker exec geminis-backend php vendor/bin/phpunit --testsuite integration --log-junit /var/www/test-results-integration.xml
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2' # o la versión de PHP que necesites
+          extensions: mbstring, intl
+          tools: composer
+
       - name: Install PHP_CodeSniffer
         run: |
           composer global require "squizlabs/php_codesniffer=*"
-          export PATH="$HOME/.composer/vendor/bin:$PATH"
+          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
       - name: Run PHP_CodeSniffer
         run: phpcs --standard=PSR12 backend/
@@ -66,9 +73,9 @@ jobs:
         run: |
           curl -H 'Content-Type: application/json' \
             -d '{"text": "PHP_CodeSniffer analysis failed for commit '${{ github.sha }}'. Please check the details in the pipeline logs."}' \
-            https://southhivecom.webhook.office.com/webhookb2/336ea6f6-72c2-4d17-be14-d77589511a35@efcf50d2-20d2-441e-accd-2e35da29abe7/IncomingWebhook/3669475e9cee41dbbf00d6aea8db6d9c/164d1eaf-1e20-4889-9bae-fbc1127f85cb
+            ${{ secrets.TEAMS_WEBHOOK_URL }}
 
-
+          
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:

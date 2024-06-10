@@ -87,6 +87,8 @@ jobs:
 
       - name: Post PHP_CodeSniffer results to PR or Commit
         if: env.file-exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           phpcsResults=$(cat phpcs-result.txt)
           body="## PHP_CodeSniffer results:\n\`\`\`\n$phpcsResults\n\`\`\`"
@@ -111,6 +113,8 @@ jobs:
 
       - name: Post test results to PR or Commit
         if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           unitTestResults=""
           integrationTestResults=""

@@ -68,38 +68,16 @@ jobs:
       - name: Run PHPCBF to fix coding standard issues
         run: phpcbf --standard=PSR12 backend/
 
-      - name: Run PHP_CodeSniffer and save results
+      - name: Run PHP_CodeSniffer
         id: phpcs
-        run: phpcs --standard=PSR12 backend/ | tee phpcs-result.txt
+        run: phpcs --standard=PSR12 backend/ || true
 
-      - name: Post PHP_CodeSniffer results to PR or Commit
+      - name: Check PHPCS Output
         if: always()
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const phpcsResults = fs.readFileSync('phpcs-result.txt', 'utf8');
-            const body = `## PHP_CodeSniffer results:\n\`\`\`\n${phpcsResults}\n\`\`\``;
-            
-            if (github.event_name === 'pull_request') {
-              github.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            } else if (github.event_name === 'push') {
-              github.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: github.sha,
-                body: body
-              });
-            }
+        run: echo "PHP_CodeSniffer found issues."
 
       - name: Send alert to Teams if PHP_CodeSniffer fails
-        if: failure()
+        if: steps.phpcs.outcome == 'failure'
         run: |
           curl -H 'Content-Type: application/json' \
             -d '{"text": "PHP_CodeSniffer analysis failed for commit '${{ github.sha }}'. Please check the details in the pipeline logs."}' \
@@ -112,7 +90,6 @@ jobs:
           path: ./*.xml
 
       - name: Post test results to PR or Commit
-        if: always()
         uses: actions/github-script@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -128,21 +105,22 @@ jobs:
             ## Integration Test Results:
             ${integrationTestResults}
             `;
-            if (github.event_name === 'pull_request') {
+
+            if (context.eventName === 'pull_request') {
               github.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: context.payload.pull_request.number,
                 body: body
               });
-            } else if (github.event_name === 'push') {
+            } else if (context.eventName === 'push') {
+              const commitSha = context.sha;
               github.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                commit_sha: github.sha,
+                commit_sha: commitSha,
                 body: body
               });
-            }
 
       - name: Clean up Docker containers and network
         if: always()

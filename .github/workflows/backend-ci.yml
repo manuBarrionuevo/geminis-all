@@ -103,7 +103,7 @@ jobs:
                 commit_sha: github.context.sha,
                 body: body
               });
-
+              
       - name: Send alert to Teams if PHP_CodeSniffer fails
         if: failure()
         run: |
@@ -120,9 +120,8 @@ jobs:
       - name: Post test results to PR or Commit
         if: always()
         uses: actions/github-script@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             let unitTestResults = '';

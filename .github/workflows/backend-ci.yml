@@ -149,7 +149,6 @@ jobs:
                 commit_sha: github.sha,
                 body: body
               });
-            }
 
       - name: Clean up Docker containers and network
         if: always()

@@ -53,10 +53,21 @@ jobs:
           docker exec geminis-backend vendor/bin/phpunit --log-junit /var/www/test-results-unit.xml
           docker exec geminis-backend php vendor/bin/phpunit --testsuite integration --log-junit /var/www/test-results-integration.xml
 
-      - name: Copy test results to host
+      - name: Install PHP_CodeSniffer
         run: |
-          docker cp geminis-backend:/var/www/test-results-unit.xml test-results-unit.xml
-          docker cp geminis-backend:/var/www/test-results-integration.xml test-results-integration.xml
+          composer global require "squizlabs/php_codesniffer=*"
+          export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+      - name: Run PHP_CodeSniffer
+        run: phpcs --standard=PSR12 backend/
+
+      - name: Send alert to Teams if PHP_CodeSniffer fails
+        if: failure()
+        run: |
+          curl -H 'Content-Type: application/json' \
+            -d '{"text": "PHP_CodeSniffer analysis failed for commit '${{ github.sha }}'. Please check the details in the pipeline logs."}' \
+            https://southhivecom.webhook.office.com/webhookb2/336ea6f6-72c2-4d17-be14-d77589511a35@efcf50d2-20d2-441e-accd-2e35da29abe7/IncomingWebhook/3669475e9cee41dbbf00d6aea8db6d9c/164d1eaf-1e20-4889-9bae-fbc1127f85cb
+
 
       - name: Upload test results
         uses: actions/upload-artifact@v2

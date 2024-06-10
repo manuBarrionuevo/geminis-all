@@ -85,7 +85,7 @@ jobs:
       - name: Authenticate GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        run: gh auth login --with-token
 
       - name: Post PHP_CodeSniffer results to PR or Commit
         if: env.file-exists == 'true'
@@ -124,7 +124,7 @@ jobs:
           if [ -f /var/www/test-results-unit.xml ]; then
             unitTestResults=$(cat /var/www/test-results-unit.xml)
           fi
-          if [ -f /var/www/test-results-integration.xml ]; then
+          if [ -f /var/www/test-results-integration.xml]; then
             integrationTestResults=$(cat /var/www/test-results-integration.xml)
           fi
           body="## Unit Test Results:\n${unitTestResults}\n\n## Integration Test Results:\n${integrationTestResults}"

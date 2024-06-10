@@ -89,18 +89,18 @@ jobs:
             const phpcsResults = fs.readFileSync('phpcs-result.txt', 'utf8');
             const body = `## PHP_CodeSniffer results:\n\`\`\`\n${phpcsResults}\n\`\`\``;
             
-            if (github.event_name === 'pull_request') {
+            if (context.eventName === 'pull_request') {
               github.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
                 body: body
               });
-            } else if (github.event_name === 'push') {
+            } else if (context.eventName === 'push') {
               github.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                commit_sha: github.sha,
+                commit_sha: context.sha,
                 body: body
               });
             }
@@ -113,6 +113,7 @@ jobs:
             ${{ secrets.TEAMS_WEBHOOK_URL }}
 
       - name: Upload test results
+        if: env.file-exists == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: test-results
@@ -126,8 +127,14 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const unitTestResults = fs.readFileSync('test-results-unit.xml', 'utf8');
-            const integrationTestResults = fs.readFileSync('test-results-integration.xml', 'utf8');
+            let unitTestResults = '';
+            let integrationTestResults = '';
+            if (fs.existsSync('test-results-unit.xml')) {
+              unitTestResults = fs.readFileSync('test-results-unit.xml', 'utf8');
+            }
+            if (fs.existsSync('test-results-integration.xml')) {
+              integrationTestResults = fs.readFileSync('test-results-integration.xml', 'utf8');
+            }
             const body = `
             ## Unit Test Results:
             ${unitTestResults}
@@ -146,9 +153,10 @@ jobs:
               github.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                commit_sha: github.sha,
+                commit_sha: context.sha,
                 body: body
               });
+            }
 
       - name: Clean up Docker containers and network
         if: always()

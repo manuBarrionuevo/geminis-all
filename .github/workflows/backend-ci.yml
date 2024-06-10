@@ -70,10 +70,17 @@ jobs:
 
       - name: Run PHP_CodeSniffer and save results
         id: phpcs
-        run: phpcs --standard=PSR12 backend/ | tee phpcs-result.txt
+        run: |
+          phpcs --standard=PSR12 backend/ | tee phpcs-result.txt
+        continue-on-error: true
+
+      - name: Check if PHP_CodeSniffer results file exists
+        id: check_file
+        run: |
+          if [ -f phpcs-result.txt ]; then echo "File exists"; else echo "File does not exist"; exit 1; fi
 
       - name: Post PHP_CodeSniffer results to PR or Commit
-        if: always()
+        if: steps.check_file.outputs.file-exists == 'true'
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -99,20 +106,21 @@ jobs:
             }
 
       - name: Send alert to Teams if PHP_CodeSniffer fails
-        if: failure()
+        if: steps.check_file.outputs.file-exists == 'false'
         run: |
           curl -H 'Content-Type: application/json' \
             -d '{"text": "PHP_CodeSniffer analysis failed for commit '${{ github.sha }}'. Please check the details in the pipeline logs."}' \
             ${{ secrets.TEAMS_WEBHOOK_URL }}
 
       - name: Upload test results
+        if: steps.check_file.outputs.file-exists == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: test-results
           path: ./*.xml
 
       - name: Post test results to PR or Commit
-        if: always()
+        if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

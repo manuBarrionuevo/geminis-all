@@ -89,14 +89,14 @@ jobs:
             const phpcsResults = fs.readFileSync('phpcs-result.txt', 'utf8');
             const body = `## PHP_CodeSniffer results:\n\`\`\`\n${phpcsResults}\n\`\`\``;
             
-            if (context.eventName === 'pull_request') {
+            if (context.payload.pull_request) {
               github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
                 body: body
               });
-            } else if (context.eventName === 'push') {
+            } else {
               github.rest.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -140,14 +140,14 @@ jobs:
             ## Integration Test Results:
             ${integrationTestResults}
             `;
-            if (context.eventName === 'pull_request') {
+            if (context.payload.pull_request) {
               github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
                 body: body
               });
-            } else if (context.eventName === 'push') {
+            } else {
               github.rest.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,

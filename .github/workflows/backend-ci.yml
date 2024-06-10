@@ -89,18 +89,18 @@ jobs:
             const phpcsResults = fs.readFileSync('phpcs-result.txt', 'utf8');
             const body = `## PHP_CodeSniffer results:\n\`\`\`\n${phpcsResults}\n\`\`\``;
             
-            if (github.context.eventName === 'pull_request') {
-              github.issues.createComment({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                issue_number: github.context.issue.number,
+            if (context.eventName === 'pull_request') {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
                 body: body
               });
-            } else if (github.context.eventName === 'push') {
-              github.repos.createCommitComment({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                commit_sha: github.context.sha,
+            } else if (context.eventName === 'push') {
+              github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha,
                 body: body
               });
             }
@@ -140,18 +140,18 @@ jobs:
             ## Integration Test Results:
             ${integrationTestResults}
             `;
-            if (github.context.eventName === 'pull_request') {
-              github.issues.createComment({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                issue_number: github.context.issue.number,
+            if (context.eventName === 'pull_request') {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
                 body: body
               });
-            } else if (github.context.eventName === 'push') {
-              github.repos.createCommitComment({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                commit_sha: github.context.sha,
+            } else if (context.eventName === 'push') {
+              github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha,
                 body: body
               });
             }

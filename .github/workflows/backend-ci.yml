@@ -99,10 +99,11 @@ jobs:
           fi
 
       - name: Send alert to Teams if PHP_CodeSniffer fails
-        if: failure()
+        if: env.file-exists == 'true'
         run: |
+          phpcsResults=$(cat phpcs-result.txt)
           curl -H 'Content-Type: application/json' \
-            -d '{"text": "PHP_CodeSniffer analysis failed for commit '${{ github.sha }}'. Please check the details in the pipeline logs."}' \
+            -d '{"text": "PHP_CodeSniffer analysis found issues for commit '${{ github.sha }}'. Please check the details:\n\n'${phpcsResults}'"}' \
             ${{ secrets.TEAMS_WEBHOOK_URL }}
 
       - name: Upload test results
@@ -124,7 +125,7 @@ jobs:
           if [ -f /var/www/test-results-integration.xml ]; then
             integrationTestResults=$(cat /var/www/test-results-integration.xml)
           fi
-          body="## Unit Test Results:\n$unitTestResults\n\n## Integration Test Results:\n$integrationTestResults"
+          body="## Unit Test Results:\n${unitTestResults}\n\n## Integration Test Results:\n${integrationTestResults}"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             gh pr comment ${{ github.event.pull_request.number }} --body "$body"
           else

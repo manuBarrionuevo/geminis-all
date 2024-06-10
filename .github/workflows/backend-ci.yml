@@ -107,13 +107,19 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: test-results
-          path: ./*.xml
+          path: /var/www/*.xml
 
       - name: Post test results to PR or Commit
         if: always()
         run: |
-          unitTestResults=$(cat test-results-unit.xml)
-          integrationTestResults=$(cat test-results-integration.xml)
+          unitTestResults=""
+          integrationTestResults=""
+          if [ -f /var/www/test-results-unit.xml ]; then
+            unitTestResults=$(cat /var/www/test-results-unit.xml)
+          fi
+          if [ -f /var/www/test-results-integration.xml ]; then
+            integrationTestResults=$(cat /var/www/test-results-integration.xml)
+          fi
           body="## Unit Test Results:\n$unitTestResults\n\n## Integration Test Results:\n$integrationTestResults"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             gh pr comment ${{ github.event.pull_request.number }} --body "$body"

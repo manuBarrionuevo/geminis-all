@@ -89,21 +89,20 @@ jobs:
             const phpcsResults = fs.readFileSync('phpcs-result.txt', 'utf8');
             const body = `## PHP_CodeSniffer results:\n\`\`\`\n${phpcsResults}\n\`\`\``;
             
-            if (context.eventName === 'pull_request') {
+            if (github.context.eventName === 'pull_request') {
               github.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                issue_number: github.context.issue.number,
                 body: body
               });
-            } else if (context.eventName === 'push') {
+            } else if (github.context.eventName === 'push') {
               github.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha,
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                commit_sha: github.context.sha,
                 body: body
               });
-            }
 
       - name: Send alert to Teams if PHP_CodeSniffer fails
         if: failure()
@@ -113,7 +112,6 @@ jobs:
             ${{ secrets.TEAMS_WEBHOOK_URL }}
 
       - name: Upload test results
-        if: env.file-exists == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: test-results
@@ -142,21 +140,20 @@ jobs:
             ## Integration Test Results:
             ${integrationTestResults}
             `;
-            if (github.event_name === 'pull_request') {
+            if (github.context.eventName === 'pull_request') {
               github.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                issue_number: github.context.issue.number,
                 body: body
               });
-            } else if (github.event_name === 'push') {
+            } else if (github.context.eventName === 'push') {
               github.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha,
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                commit_sha: github.context.sha,
                 body: body
               });
-            }
 
       - name: Clean up Docker containers and network
         if: always()
